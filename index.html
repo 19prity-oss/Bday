@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, My Universe ✨</title>
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Sacramento&display=swap');
+
+        :root {
+            --bg-dark: #0b090a;
+            --card-bg: rgba(26, 15, 26, 0.85);
+            --primary: #ff007f;
+            --secondary: #7928ca;
+            --accent: #ffb703;
+            --text: #f8f9fa;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(121, 40, 202, 0.25) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(255, 0, 127, 0.25) 0%, transparent 40%);
+        }
+
+        /* Floating Neon Elements */
+        .floating-particle {
+            position: fixed;
+            font-size: 1.5rem;
+            animation: floatUp 7s linear infinite;
+            z-index: 0;
+            pointer-events: none;
+            filter: drop-shadow(0 0 10px var(--primary));
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) scale(0.6) rotate(0deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateY(-10vh) scale(1.2) rotate(360deg); opacity: 0; }
+        }
+
+        /* Full Screen Sections */
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            max-width: 650px;
+            width: 100%;
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 0, 127, 0.3);
+            padding: 45px;
+            border-radius: 30px;
+            box-shadow: 0 0 35px rgba(255, 0, 127, 0.2), inset 0 0 15px rgba(121, 40, 202, 0.2);
+            backdrop-filter: blur(15px);
+            text-align: center;
+        }
+
+        h1 {
+            font-family: 'Sacramento', cursive;
+            color: var(--primary);
+            font-size: 4rem;
+            margin-bottom: 5px;
+            text-shadow: 0 0 20px rgba(255, 0, 127, 0.6);
+        }
+
+        h2 {
+            color: var(--accent);
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        p {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: #e5e5e5;
+        }
+
+        /* Scroll Arrow */
+        .scroll-down {
+            margin-top: 35px;
+            font-size: 1.8rem;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-12px);}
+            60% {transform: translateY(-6px);}
+        }
+
+        /* Canvas Animation Stage */
+        .canvas-stage {
+            position: relative;
+            width: 100%;
+            height: 250px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px dashed rgba(255, 0, 127, 0.4);
+            border-radius: 20px;
+            margin: 20px 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Countdown */
+        .countdown-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .time-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 18px;
+            min-width: 65px;
+        }
+
+        .time-box span {
+            display: block;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent);
+        }
+
+        .time-box label {
+            font-size: 0.7rem;
+            color: #adb5bd;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Neon Polaroid Gallery */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .photo-card {
+            background: #fff;
+            padding: 10px 10px 25px 10px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            transform: rotate(-3deg);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .photo-card:nth-child(even) { transform: rotate(3deg); }
+        .photo-card:hover { 
+            transform: scale(1.1) rotate(0deg); 
+            z-index: 10; 
+            box-shadow: 0 0 25px var(--primary);
+        }
+        .photo-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 10px; }
+        .photo-card p { font-size: 0.8rem; margin: 8px 0 0 0; color: #212529; font-weight: 600; }
+
+        /* Interactive Surprise Cards */
+        .surprise-box {
+            background: linear-gradient(135deg, rgba(255,0,127,0.1), rgba(121,40,202,0.1));
+            border: 2px dashed var(--primary);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .surprise-box:hover {
+            background: linear-gradient(135deg, rgba(255,0,127,0.25), rgba(121,40,202,0.25));
+            box-shadow: 0 0 20px rgba(255,0,127,0.4);
+        }
+
+        /* Love Letter */
+        .letter-box {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--primary);
+            padding: 25px;
+            border-radius: 20px;
+            margin: 20px 0;
+            text-align: left;
+            line-height: 1.8;
+            min-height: 120px;
+            font-family: 'Poppins', sans-serif;
+            color: #ffccd5;
+            box-shadow: inset 0 0 15px rgba(255, 0, 127, 0.2);
+        }
+
+        /* Trick Buttons */
+        .trick-container {
+            position: relative;
+            height: 70px;
+            margin-top: 25px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            align-items: center;
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: 0.3s ease;
+            box-shadow: 0 5px 20px rgba(255, 0, 127, 0.4);
+            font-weight: 600;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 0, 127, 0.7);
+        }
+
+        #runaway-btn {
+            background: #495057;
+            position: absolute;
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Neon Floating Elements -->
+    <div class="floating-particle" style="left: 10%; animation-duration: 6s;">💖</div>
+    <div class="floating-particle" style="left: 30%; animation-duration: 8s; animation-delay: 1s;">✨</div>
+    <div class="floating-particle" style="left: 70%; animation-duration: 7s; animation-delay: 2s;">🎈</div>
+    <div class="floating-particle" style="left: 85%; animation-duration: 9s; animation-delay: 0.5s;">❤️</div>
+
+    <!-- SECTION 1: Hero Welcome -->
+    <section>
+        <div class="card">
+            <h1>Happy Birthday</h1>
+            <h2>LOVE ✨</h2>
+            <p>A little love awaits below...</p>
+            <div class="scroll-down" onclick="document.getElementById('section-2').scrollIntoView({behavior: 'smooth'})">↓</div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: Guaranteed YouTube Song Link Button -->
+    <section id="section-2">
+        <div class="card">
+            <h2>Play Our Song  🎵</h2>
+            <p>Tap the button below to listen to our special song:</p>
+            <div style="margin: 25px 0;">
+                <a href="https://www.youtube.com/watch?v=vEe-UgJvUHE" target="_blank">
+                    <button style="background: linear-gradient(135deg, #ff0000, #ff5252); font-size: 1.1rem; padding: 15px 40px;">▶ Play Raabta on YouTube</button>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: Countdown Timer -->
+    <section>
+        <div class="card">
+            <h2>Every Second With You ⏳</h2>
+            <div class="countdown-container">
+                <div class="time-box"><span id="days">00</span><label>Days</label></div>
+                <div class="time-box"><span id="hours">00</span><label>Hours</label></div>
+                <div class="time-box"><span id="mins">00</span><label>Mins</label></div>
+                <div class="time-box"><span id="secs">00</span><label>Secs</label></div>
+            </div>
+            <p>...of loving you and making incredible memories.</p>
+        </div>
+    </section>
+
+    <!-- SECTION 4: Advanced Vector Animation Stage -->
+    <section>
+        <div class="card">
+            <h2> Let's celebrate 🎂</h2>
+            <p>Cut the cake!</p>
+            
+            <div class="canvas-stage">
+                <canvas id="loveCanvas" width="500" height="250"></canvas>
+            </div>
+
+            <button onclick="triggerLoveStory()" style="margin-top: 15px;">Play  🎬</button>
+        </div>
+    </section>
+
+    <!-- SECTION 5: Neon Photo Gallery -->
+    <section>
+        <div class="card">
+            <h2>Our Memories 📸</h2>
+            <div class="gallery">
+                <div class="photo-card">
+                    <img src="photo1.JPEG" alt="Memory">
+                    <p> </p>
+                </div>
+                <div class="photo-card">
+                    <img src="photo2.JPEG" alt="Memory">
+                    <p> </p>
+                </div>
+                <div class="photo-card">
+                    <img src="photo5.JPEG" alt="Memory">
+                    <p> </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 6: Interactive Reasons -->
+    <section>
+        <div class="card">
+            <h2>Why You're Special 🌹</h2>
+            <p>Tap the box to unlock a secret message:</p>
+            <div class="surprise-box" onclick="showRandomReason()">
+                <span id="reason-text" style="font-weight: bold; color: var(--accent);">✨ Tap to reveal a reason ✨</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 7: Trick & Letter -->
+    <section>
+        <div class="card">
+            <h2>Quick Question... 💫</h2>
+            <p>Will you stay locked in my heart forever?</p>
+            <div class="trick-container">
+                <button onclick="acceptLove()">Always & Forever ❤️</button>
+                <button id="runaway-btn" onmouseover="moveButton()" onclick="moveButton()">Nope 😜</button>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid rgba(255,0,127,0.3); margin: 35px 0;">
+
+            <h2>My Letter For You 💌</h2>
+            <div class="interactive-section">
+                <button onclick="revealLetter()" id="letter-btn">Open My Heart</button>
+                <div class="letter-box" id="letter-content" style="display: none;">
+                    <p id="typed-text"></p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 30px;">
+                <button onclick="fireConfetti()" style="background: linear-gradient(135deg, var(--accent), var(--primary));"> 🎉</button>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Timer setup
+        const startDate = new Date("2024-09-06T00:00:00"); 
+        function updateTimer() {
+            const now = new Date();
+            const diff = now - startDate;
+            
+            document.getElementById('days').innerText = String(Math.floor(diff / (1000 * 60 * 60 * 24))).padStart(2, '0');
+            document.getElementById('hours').innerText = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0');
+            document.getElementById('mins').innerText = String(Math.floor((diff / 1000 / 60) % 60)).padStart(2, '0');
+            document.getElementById('secs').innerText = String(Math.floor((diff / 1000) % 60)).padStart(2, '0');
+        }
+        setInterval(updateTimer, 1000);
+        updateTimer();
+
+        // Canvas Animation Engine
+        const canvas = document.getElementById('loveCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let animState = {
+            char1X: -50,
+            char2X: 550,
+            target1X: 190,
+            target2X: 280,
+            stage: 0,
+            cakeCut: false,
+            hug: false
+        };
+
+        function drawScene() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            ctx.strokeStyle = "rgba(255, 0, 127, 0.4)";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(50, 200);
+            ctx.lineTo(450, 200);
+            ctx.stroke();
+
+            if (animState.stage >= 1) {
+                ctx.fillStyle = "#ffb703";
+                ctx.fillRect(235, 160, 30, 40);
+                ctx.fillStyle = "#ff007f";
+                ctx.fillRect(230, 150, 40, 15);
+
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(248, 135, 4, 15);
+                if (!animState.cakeCut) {
+                    ctx.fillStyle = "#fffa65";
+                    ctx.beginPath();
+                    ctx.arc(250, 130, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            ctx.fillStyle = "#48dbfb";
+            ctx.fillRect(animState.char1X, 140, 25, 45);
+            ctx.fillStyle = "#ffcccc";
+            ctx.beginPath();
+            ctx.arc(animState.char1X + 12.5, 125, 10, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = "#ff6b81";
+            ctx.fillRect(animState.char2X, 140, 25, 45);
+            ctx.fillStyle = "#ffcccc";
+            ctx.beginPath();
+            ctx.arc(animState.char2X + 12.5, 125, 10, 0, Math.PI * 2);
+            ctx.fill();
+
+            if (animState.hug) {
+                ctx.font = "24px Arial";
+                ctx.fillText("❤️", 235, 105);
+            }
+        }
+
+        function triggerLoveStory() {
+            animState.stage = 1;
+            animState.char1X = -50;
+            animState.char2X = 550;
+            animState.cakeCut = false;
+            animState.hug = false;
+
+            let walkInterval = setInterval(() => {
+                if (animState.char1X < animState.target1X) animState.char1X += 2;
+                if (animState.char2X > animState.target2X) animState.char2X -= 2;
+
+                drawScene();
+
+                if (animState.char1X >= animState.target1X && animState.char2X <= animState.target2X) {
+                    clearInterval(walkInterval);
+                    
+                    setTimeout(() => {
+                        animState.cakeCut = true;
+                        fireConfetti();
+                        drawScene();
+
+                        setTimeout(() => {
+                            animState.target1X = 220;
+                            animState.target2X = 250;
+                            
+                            let hugInterval = setInterval(() => {
+                                if (animState.char1X < animState.target1X) animState.char1X += 1;
+                                if (animState.char2X > animState.target2X) animState.char2X -= 1;
+                                drawScene();
+
+                                if (animState.char1X >= animState.target1X) {
+                                    clearInterval(hugInterval);
+                                    animState.hug = true;
+                                    fireConfetti();
+                                    drawScene();
+                                }
+                            }, 30);
+                        }, 1000);
+                    }, 1000);
+                }
+            }, 30);
+        }
+
+        drawScene();
+
+        const reasons = [
+            "“” ✨",
+            "“You are my favorite notification.” 🤗",
+            "“I wish I could pause time whenever I'm in your arms” ",
+            "“You inspire me to be the best version of myself.” 🚀",
+            "“Home isn't a physical place anymore—it's wherever you are.” 🏡❤️"
+        ];
+        function showRandomReason() {
+            const randomIndex = Math.floor(Math.random() * reasons.length);
+            document.getElementById('reason-text').innerText = reasons[randomIndex];
+        }
+
+        function moveButton() {
+            const btn = document.getElementById('runaway-btn');
+            const x = Math.random() * 160 - 80;
+            const y = Math.random() * 40 - 20;
+            btn.style.transform = `translate(${x}px, ${y}px)`;
+        }
+
+        function acceptLove() {
+            alert("Best decision ever! Happy Birthday, my love! 🥰");
+            fireConfetti();
+        }
+
+        const fullMessage = "My Baby, My cutiepie, \n\nMy love, I just want you to know how special you are to me. You make my world brighter in ways I can't even explain. Every little moment with you becomes a beautiful memory, and every time I think about you, I can't help but smile. I may not always find the perfect words to express my feelings, but I hope you can feel how deeply I care about you. You're my favourite person, my happiest thought, and the one I want beside me through all the ups and downs. No matter what life brings, I hope we keep choosing each other, loving each other, and creating a thousand beautiful memories together. I love you more than words could ever say. ❤️❤️";
+        
+        function revealLetter() {
+            const letterBox = document.getElementById('letter-content');
+            const btn = document.getElementById('letter-btn');
+            letterBox.style.display = 'block';
+            btn.style.display = 'none';
+            
+            let i = 0;
+            document.getElementById('typed-text').innerHTML = "";
+            
+            function typeWriter() {
+                if (i < fullMessage.length) {
+                    if (fullMessage.charAt(i) === '\n') {
+                        document.getElementById('typed-text').innerHTML += "<br>";
+                    } else {
+                        document.getElementById('typed-text').innerHTML += fullMessage.charAt(i);
+                    }
+                    i++;
+                    setTimeout(typeWriter, 35);
+                }
+            }
+            typeWriter();
+        }
+
+        function fireConfetti() {
+            confetti({
+                particleCount: 150,
+                spread: 100,
+                origin: { y: 0.6 },
+                colors: ['#ff007f', '#7928ca', '#ffb703', '#ffffff']
+            });
+        }
+    </script>
+</body>
+</html>
